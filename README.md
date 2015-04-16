@@ -5,6 +5,13 @@ I'm pretty sure throughout the quarter Retz will have us add more and more funct
 
 I put all the specs we have so far (that pdf) in the specs directory.  
 
-I half baked an idea for how this project might be organized (I think it's pretty similar to how lzw was organized).  The header files have a comment at the top saying what I imagine that pair of files should do, but nothing's set in stone.  Let me know if you have any concerns.  Tonight (after I do my other homework) I'll add function headers to the .h files.
+I made a bunch of files and header files planning out how I think this project should work.  Let me know what you think... (I kind of just went through the wikipedia article for compilers and merged it with how lzw was organized to make an lzw-style wikipedia-informed two-pass assembler).  Here's a high level overview:
 
-Don't be afraid to call me out on my bull shit... I'm not as opinionated as I may appear...
+Assemble.c contains the main function.  It takes the output from pass 1 and feeds it into pass 2.  Then prints the output of pass 2 to stdout.  
+
+# Pass 1
+Lexer rules the first pass.  Lexer forces Tokenizer to scan input for labels, opcodes, registers, immediates, etc. (Tokenizer skips over any whitespace and comments) and groups tokens together into lexemes.  A lexeme is a command (an opcode and some arguments).  Lexer also registers any labels in the SymbolTable.
+
+# Pass 2
+
+CodeGenerator rules second pass.  CodeGenerator takes lexemes one by one, resolves any labels using SymbolTable, and outputs 1's and 0's (machine code).
