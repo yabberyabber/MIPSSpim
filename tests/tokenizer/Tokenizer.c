@@ -50,7 +50,7 @@ void TokenGenerate(char *tokenStr, Token **token) {
 		(*token)->st[strlen(tokenStr) - 1] = 0;
 	}
 	else if (IsInstruction(tokenStr)) {
-		(*token)->type = TOKEN_INSTRUCTION;
+		(*token)->type = TOKEN_OPCODE;
 		(*token)->st = malloc(sizeof(char) * strlen(tokenStr) + 1);
 		strcpy((*token)->st, tokenStr);
 	}
@@ -99,19 +99,6 @@ int TokenGet(void *tkp, Token **token) {
 
 	return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 #endif

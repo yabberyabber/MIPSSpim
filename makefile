@@ -1,7 +1,7 @@
 CPP=gcc
 CPPFLAGS=-Wall
 
-DEPS=CodeGenerator.o Lexer.o SymbolTable.o Tokenizer.o
+DEPS=CodeGenerator.o Lexer.o SymbolTable.o Tokenizer.o Instruction.o
 
 TARGET=assemble
 
@@ -12,4 +12,16 @@ it: $(DEPS)
 	$(CPP) $(CPPFLAGS) -c $<
 
 clean:
+	touch $(TARGET)
+	touch a.o
 	rm *.o $(TARGET)
+
+tests: it testToken testLexer
+
+testToken: it
+	cp util.h Tokenizer.c Tokenizer.h Instruction.c Instruction.h tests/tokenizer/
+	cd tests/tokenizer; ./runtests
+
+testLexer: it
+	cp util.h Lexer.c Lexer.h Tokenizer.c Tokenizer.h Instruction.c Instruction.h tests/lexer/
+	cd tests/lexer; ./runtests

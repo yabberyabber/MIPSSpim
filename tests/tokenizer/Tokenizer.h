@@ -7,7 +7,7 @@
  */
 
 #define 		TOKEN_LABEL_DEF			1
-#define			TOKEN_INSTRUCTION		2
+#define			TOKEN_OPCODE			2
 #define			TOKEN_ARG				3
 #define			TOKEN_ENDL				4
 
