@@ -1,3 +1,6 @@
+#ifndef CODEGENERATOR_H
+#define CODEGENERATOR_H
+
 /**
  * This module does the second pass.
  *
@@ -8,7 +11,7 @@
 typedef struct CodeGenerator {
 	//I can't imagine what would be needed here
 	//but it makes sense to have it
-}
+};
 
 void *CGInit();
 void CGDestroy(void *codeGenr);
@@ -20,3 +23,5 @@ void CGDestroy(void *codeGenr);
  */
 int CGGenerateInstruction(CodeGenerator *cg, SymbolTable *symTb,
 	Lexeme *command, int *machineCode);
+
+#endif

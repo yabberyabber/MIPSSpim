@@ -9,6 +9,10 @@
 #define NUM_I_INSTR		2
 #define NUM_J_INSTR		2
 #define NUM_P_INSTR		1
+#define R_INSTR 		1
+#define I_INSTR 		2
+#define J_INSTR 		3
+#define P_INSTR 		4
 
 const char *R_INSTRUCTIONS[] = {"and", "or", "add", "addu", "sll", "srl", "sra", "sub", "sltu", "beq", "bne", "lw", "sw", "jr"};
 const char *I_INSTRUCTIONS[] = {"addi", "addiu", "sltiu"};
@@ -20,7 +24,7 @@ int IsRTypeInstruction(char *str) {
 
 	for (i = 0; i < NUM_R_INSTR; i++) {
 		if (strcmp(R_INSTRUCTIONS[i], str) == 0)
-			return 1;
+			return R_INSTR;
 	}
 	return 0;
 }
@@ -30,7 +34,7 @@ int IsITypeInstruction(char *str) {
 
 	for (i = 0; i < NUM_I_INSTR; i++) {
 		if (strcmp(I_INSTRUCTIONS[i], str) == 0)
-			return 1;
+			return I_INSTR;
 	}
 	return 0;
 }
@@ -40,7 +44,7 @@ int IsJTypeInstruction(char *str) {
 
 	for (i = 0; i < NUM_J_INSTR; i++) {
 		if (strcmp(J_INSTRUCTIONS[i], str) == 0)
-			return 1;
+			return J_INSTR;
 	}
 	return 0;
 }
@@ -50,7 +54,7 @@ int IsPTypeInstruction(char *str) {
 
 	for (i = 0; i < NUM_P_INSTR; i++) {
 		if (strcmp(P_INSTRUCTIONS[i], str) == 0)
-			return 1;
+			return P_INSTR;
 	}
 	return 0;
 }
