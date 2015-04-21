@@ -87,23 +87,6 @@ static int LexerQueuePush(Lexer *l, Lexeme *v) {
 	return 1;
 }
 
-static void LexerEvaluateInstruction(Lexer *l, Lexeme *instr) {
-	LexerQueuePush(l, instr);
-	l->instAddress += 4;
-	/**
-	 * We really do need to split up P instructions here, because
-	 * different P instructions have different real lengths so we
-	 * need to know those lengths in order to update the address
-	 * properly.
-	if (IsPTypeInstruction(instr->opcode->st)) {
-		Expand(l, instr);
-	}
-	else {
-		LexerQueuePush(l, instr);
-	}
-	*/
-}
-
 static void LexerGenerateInstruction(Lexer *l, Token *instruction) {
 	int argCount = 0;
 	Lexeme *instr = malloc(sizeof(Lexeme));
@@ -118,7 +101,10 @@ static void LexerGenerateInstruction(Lexer *l, Token *instruction) {
 		instr->args[argCount++] = arg;
 	}
 
-	LexerEvaluateInstruction(l, instr);
+	instr->address = l->instAddress;
+	l->instAddress += 4;
+
+	LexerQueuePush(l, instr);
 }
 
 

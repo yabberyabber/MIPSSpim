@@ -1,7 +1,7 @@
 CPP=gcc
 CPPFLAGS=-Wall
 
-DEPS=CodeGenerator.o Lexer.o SymbolTable.o Tokenizer.o Instruction.o
+DEPS=Lexer.o SymbolTable.o Tokenizer.o Instruction.o
 
 TARGET=assemble
 
