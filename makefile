@@ -25,3 +25,7 @@ testToken: it
 testLexer: it
 	cp util.h Lexer.c Lexer.h Tokenizer.c Tokenizer.h Instruction.c Instruction.h tests/lexer/
 	cd tests/lexer; ./runtests
+
+testSymTb: it
+	cp SymbolTable.c SymbolTable.h tests/symbolTable/
+	cd tests/symbolTable; ./runtests

@@ -1,0 +1,194 @@
+#Caller pushes arguments first into a0 through a3 (extras on stack)
+#caller saves $tx registers if need be
+#Caller jumps to top of function - jal
+
+#callee pushes address (in $ra) on stack
+#callee pushes frame pointer (dynamic link) (in $fp) on stack
+
+#callee saves $sx registers if need be
+#callee allocates space for local variables (increases stack pointer, $sp)
+
+#callee executes his code
+#callee puts return value in $v0-$v1
+
+#callee pops local variables
+#callee restures $sx registers if need be
+#callee pops frame pointer into $fp
+#callee pops return address and jumps to it
+
+#caller pops arguments
+
+#caller lives on
+
+
+
+bintohex:
+         #Callee doesn't push $ra cuz this won't call other functions
+         #callee pushes frame pointer
+         addi  $sp, $sp, -4
+         sw    $fp, 0($sp)
+
+         #callee saves local variable spot for $a0
+         addi  $sp, $sp, -4
+         #callee doesn't need to save any $sx
+
+         sw    $a0, 0($sp)          #copy $a1 to first local var
+         addi  $t4, $sp, 3          #save address of number being converetd
+         addi  $t0, $a1, 0          #copy $a1 into $t0
+         addi  $t3, $zero, 4        #$t3 = 4
+
+looptop: 
+         lb    $t1, 0($t4)          #copy the ith byte into $t1
+         addi  $t4, $t4, -1            #for every byte in $a0 (store the byte in $t1):
+
+         srl   $t2, $t1, 4          #logical shift $t1 4 bits store in $2
+         andi  $t2, $t2, 15         #Get rid of any sign extension that came from lb load byte
+
+#converts the lower 4 bytes in $t1 to the ascii code representing
+#it in hex.  Jumps back to the address stored in $t8
+         addi  $t9, $zero, 9
+         ble   $t2, $t9, skippedA   #if $t2 <= 9, it's 0-9
+
+         addi  $t2, $t2, 7         #$t2 + 7 -> $t2
+skippedA:  
+         addi  $t2, $t2, 48         #$t2 + 48 -> $t2
+
+         sb    $t2, 0($t0)          #$t2 -> store in *$t0
+         addi  $t0, $t0, 1          #increment $t0 by one char
+            
+
+         andi  $t2, $t1, 15         #and $t1 with xF -> store in $t2
+         addi  $t9, $zero, 9
+         ble   $t2, $t9, skippedB   #if $t2 <= 9, skip the next step
+
+         addi  $t2, $t2, 7         #$t2 + 7 -> $t2
+skippedB:  
+         addi  $t2, $t2, 48         #$t2 + 48 -> $t2
+
+         sb    $t2, 0($t0)          #$t2 -> store in *$t0
+         addi  $t0, $t0, 1          #increment $t0 by one char
+
+         addi  $t3, $t3, -1
+         bgt   $t3, $zero, looptop  #if $t3 is nonzero, go back to the start of the for
+         
+
+         sb    $zero, 0($t0)
+
+         #callee pops frame pointer into $fp
+         lw    $fp, 0($sp)
+         addi  $sp, $sp, 4
+
+         #callee pops return address and jumps to it
+         jr    $ra
+
+
+#a0 is high word of 1st 64bit number
+#a1 is low word of 1st num
+#a2 is high word for 2nd num
+#a3 is low word for 2nd num
+#v0 is high word for sum
+#v1 is low word for sum
+doubleadd:
+         addu  $v1, $a1, $a3    # add low word
+         sltu  $v0, $v1, $a3    # set carry-in bit 
+         addu  $v0, $v0, $a0    # add in 1st high word
+         addu  $v0, $v0, $a2    # add in 2nd high word
+
+         #callee pops return address and jumps to it
+         jr    $ra
+
+
+doubleneg:
+         nor   $a0, $a0, $0	#not high word (in place)
+         nor   $a1, $a1, $0	#not low word (in place)
+         addi  $v1, $a1, 1	#add 1 to low word (store v1)
+         sltu  $v0, $v1, $a1	#check for overflow and if so add 1 to high word result
+         addu  $v0, $v0, $a0	#finally add in high word to overflow-corrected result
+
+         jr    $ra
+
+
+#a0 is high word of 1st 64bit number
+#a1 is low word of 1st num
+#a2 is high word for 2nd num
+#a3 is low word for 2nd num
+#v0 is high word for result
+#v1 is low word for result
+doublesub:
+         addi  $sp, $sp, -4
+         sw    $ra, 0($sp)      #save return address
+         addi  $sp, $sp, -4
+         sw    $a3, 0($sp)      #save a3
+         addi  $sp, $sp, -4
+         sw    $a2, 0($sp)      #save a2
+         addi  $sp, $sp, -4
+         sw    $a1, 0($sp)      #save a1
+         addi  $sp, $sp, -4
+         sw    $a0, 0($sp)      #save a0
+
+         addi  $a0, $a2, 0
+         addi  $a1, $a3, 0
+         jal   doubleneg
+
+         addi  $a2, $v0, 0      # save -b
+         addi  $a3, $v1, 0
+
+         lw    $a0, 0($sp)      # restore a0 and a1
+         addi  $sp, $sp, 4
+         lw    $a1, 0($sp)
+         addi  $sp, $sp, 4
+
+         jal   doubleadd
+
+         lw    $a2, 0($sp)      # restore a2 and a3
+         addi  $sp, $sp, 4
+         lw    $a3, 0($sp)
+         addi  $sp, $sp, 4
+
+         lw    $ra, 0($sp)
+         addi  $sp, $sp, 4
+
+         jr    $ra
+
+
+#main calls bintohex with an arbitrary number and prints result
+main:
+         #push arguments
+         #caller doesn't bother saving $tx cuz he don need em
+         #caller jump and link
+         jal doubleadd
+
+         #callee does his thing and returns
+
+         addi $a0, $v0, 0     # load the high word
+         la   $a1, str        # load the str pointer
+         jal bintohex         # convert to hex
+         addi $a0, $v1, 0     # load the low word
+         addi $a1, $a1, 8
+         jal bintohex
+
+         la $a0, str
+         li $v0, 4
+         syscall              #print the string starting at $a0
+         addi $a0, $0, 10     
+         addi $v0, $0, 11
+         syscall              #print '\n'
+
+         jal doublesub
+
+         addi $a0, $v0, 0     # load the high word
+         la   $a1, str        # load the str pointer
+         jal bintohex         # convert to hex
+         addi $a0, $v1, 0     # load the low word
+         addi $a1, $a1, 8
+         jal bintohex
+
+         la $a0, str
+         li $v0, 4
+         syscall              #print the string starting at $a0
+         addi $a0, $0, 10     
+         addi $v0, $0, 11
+         syscall              #print '\n'
+
+         li $v0, 10
+         syscall              #quit

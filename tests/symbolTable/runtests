@@ -1,0 +1,13 @@
+#!/bin/bash
+
+make it
+
+for i in test*.in
+do
+   echo "RUNNING TEST $i ----------------"
+   ofname=${i/.in/.out}
+   ./driver < $i > my$ofname
+   echo $?
+   diff -bw my$ofname $ofname
+done
+
