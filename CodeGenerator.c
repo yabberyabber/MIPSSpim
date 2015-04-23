@@ -42,7 +42,12 @@ int CGGenerateInstruction(void *symTb, Lexeme *command, int *machineCode){
  		case I_INSTR:
  			*machineCode |= getReg(command->args[0]->st) << 15; // rt
  			*machineCode |= getReg(command->args[1]->st) << 20; // rs
- 			*machineCode |= atoi(command->args[2]->st) & 0x0000FFFF; // imm
+ 			if(!strcmp(str, "beq") || !strcmp(str, "bne")){
+ 				SymTbLookup(symTb, command->args[2]->st, &val);
+ 				*machineCode |= (val - command->address) & 0x0000FFFF; // branch address
+ 			}
+ 			else
+ 				*machineCode |= atoi(command->args[2]->st) & 0x0000FFFF; // imm
  			break;
  		case J_INSTR:
  			SymTbLookup(symTb, command->args[0]->st, &val);
