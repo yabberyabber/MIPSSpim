@@ -18,8 +18,11 @@ const char *R_INSTRUCTIONS[] = {"and", "or", "add", "addu", "sll", "srl", "sra",
 const int R_OPCODES[] = {0,0,0,0,0,0,0,0,0,4,5,0x23,0x2B,0};
 const int R_FUNC_CODES[] = {0x24,0x25,0x20,0x21,0x00,0x02,0x03,0x22,0x2B,0,0,0,0,0x08};
 const char *I_INSTRUCTIONS[] = {"addi", "addiu", "sltiu"};
+const int I_OPCODES[] = {0x08,0x09,0x0B};
 const char *J_INSTRUCTIONS[] = {"j", "jal"};
+const int J_OPCODES[] = {0x02,0x03};
 const char *P_INSTRUCTIONS[] = {"syscall"};
+const int P_OPCODES[] = {0};
 
 int IsRTypeInstruction(char *str) {
 	int i;
@@ -62,7 +65,8 @@ int IsPTypeInstruction(char *str) {
 }
 
 int getCodes(char* str) {
-	int i, func, ret;
+	int i, ret;
+	int func = 0;
 	if(isRTypeInstruction(str)) {
 		for(i = 0; i < NUM_R_INSTR; i++) {
 			if (strcmp(R_INSTRUCTIONS[i], str) == 0)
@@ -75,23 +79,23 @@ int getCodes(char* str) {
                 for(i = 0; i < NUM_I_INSTR; i++) {
                         if (strcmp(I_INSTRUCTIONS[i], str) == 0)
                                 ret = I_OPCODES[i];
-                                func = I_FUNC_CODES[i];
                 }
         }
 	else if(isJTypeInstruction(str)) {
                 for(i = 0; i < NUM_J_INSTR; i++) {
                         if (strcmp(J_INSTRUCTIONS[i], str) == 0)
                                 ret = J_OPCODES[i];
-                                func = J_FUNC_CODES[i];
                 }
         }
-	if(isPTypeInstruction(str)) {
+	else if(isPTypeInstruction(str)) {
                 for(i = 0; i < NUM_P_INSTR; i++) {
                         if (strcmp(P_INSTRUCTIONS[i], str) == 0)
                                 ret = P_OPCODES[i];
-                                func = P_FUNC_CODES[i];
                 }
         }
+	else { return -1; }
+
+
 	ret = ret << 27;
 	ret = ret & func;
 	return ret;
