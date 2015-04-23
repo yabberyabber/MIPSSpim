@@ -67,27 +67,27 @@ int IsPTypeInstruction(char *str) {
 int getCodes(char* str) {
 	int i, ret;
 	int func = 0;
-	if(isRTypeInstruction(str)) {
+	if(IsRTypeInstruction(str)) {
 		for(i = 0; i < NUM_R_INSTR; i++) {
-			if (strcmp(R_INSTRUCTIONS[i], str) == 0)
+			if (strcmp(R_INSTRUCTIONS[i], str) == 0){
         	                ret = R_OPCODES[i];
 				func = R_FUNC_CODES[i];
 			}
-        	}
+        }
 	}
-	else if(isITypeInstruction(str)) {
+	else if(IsITypeInstruction(str)) {
                 for(i = 0; i < NUM_I_INSTR; i++) {
                         if (strcmp(I_INSTRUCTIONS[i], str) == 0)
                                 ret = I_OPCODES[i];
                 }
         }
-	else if(isJTypeInstruction(str)) {
+	else if(IsJTypeInstruction(str)) {
                 for(i = 0; i < NUM_J_INSTR; i++) {
                         if (strcmp(J_INSTRUCTIONS[i], str) == 0)
                                 ret = J_OPCODES[i];
                 }
         }
-	else if(isPTypeInstruction(str)) {
+	else if(IsPTypeInstruction(str)) {
                 for(i = 0; i < NUM_P_INSTR; i++) {
                         if (strcmp(P_INSTRUCTIONS[i], str) == 0)
                                 ret = P_OPCODES[i];
@@ -97,7 +97,7 @@ int getCodes(char* str) {
 
 
 	ret = ret << 27;
-	ret = ret & func;
+	ret = ret | func;
 	return ret;
 }
 
