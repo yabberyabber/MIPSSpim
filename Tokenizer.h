@@ -10,6 +10,7 @@
 #define			TOKEN_OPCODE			2
 #define			TOKEN_ARG				3
 #define			TOKEN_ENDL				4
+#define			TOKEN_DIRECTIVE			5
 
 typedef struct Token {
 	int type;

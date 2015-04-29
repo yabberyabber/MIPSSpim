@@ -44,17 +44,26 @@ void TokenGenerate(char *tokenStr, Token **token) {
 	tokenStr = TrimString(tokenStr);
 
 	if (tokenStr[strlen(tokenStr) - 1] == ':') {
+		//Token ends with ':' so it must be a label
 		(*token)->type = TOKEN_LABEL_DEF;
-		(*token)->st = malloc(sizeof(char) * strlen(tokenStr));
+		(*token)->st = malloc(sizeof(char) * strlen(tokenStr) + 1);
 		strcpy((*token)->st, tokenStr);
 		(*token)->st[strlen(tokenStr) - 1] = 0;
 	}
+	else if (tokenStr[0] == '.') {
+		//token starts with '.' so it must be an assembler directive
+		(*token)->type = TOKEN_DIRECTIVE;
+		(*token)->st = malloc(sizeof(char) * strlen(tokenStr));
+		strcpy((*token)->st, tokenStr + 1);
+	}
 	else if (IsInstruction(tokenStr)) {
+		//token is in the list of instructions
 		(*token)->type = TOKEN_OPCODE;
 		(*token)->st = malloc(sizeof(char) * strlen(tokenStr) + 1);
 		strcpy((*token)->st, tokenStr);
 	}
 	else {
+		//token is none of the above... default to argument
 		(*token)->type = TOKEN_ARG;
 		(*token)->st = malloc(sizeof(char) * strlen(tokenStr) + 1);
 		strcpy((*token)->st, tokenStr);

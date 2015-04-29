@@ -107,6 +107,16 @@ static void LexerGenerateInstruction(Lexer *l, Token *instruction) {
 	LexerQueuePush(l, instr);
 }
 
+/**
+ * We don't actually know how to process any directives, so if one is
+ * encountered, we throw away the rest of the line and hope it wasn't
+ * important...
+ */
+static void LexerProcessDirective(Lexer *l, Token *tok) {
+	while (tok->type != TOKEN_ENDL)
+		TokenGet(l->tokenizer, &tok);
+}
+
 
 /**
  * Returns a single lexeme (represents a command)
@@ -119,12 +129,13 @@ static void LexerGenerateInstruction(Lexer *l, Token *instruction) {
 int LexerGetLexeme(void *lexer, Lexeme **lexeme, void *symTb) {
 	Lexer *l = (Lexer*) lexer;
 	Token *tok;
+	int status;
 
 	if (l->lQueue[0] != NULL) {
 		*lexeme = LexerQueuePop(l);
 	}
 
-	while (TokenGet(l->tokenizer, &tok) == 0) {
+	while ((status = TokenGet(l->tokenizer, &tok)) == 0) {
 		if (tok->type == TOKEN_LABEL_DEF) {
 			LexerRegisterLabel(l, tok, symTb);
 		}
@@ -137,7 +148,13 @@ int LexerGetLexeme(void *lexer, Lexeme **lexeme, void *symTb) {
 			printf("argument at beginning of line. bad form, bro\n");
 			return -1;
 		}
+		else if (tok->type == TOKEN_DIRECTIVE) {
+			LexerProcessDirective(l, tok);
+		}
 	}
+
+	if (status == -1)
+		return -1;
 
 	return 0;
 }
