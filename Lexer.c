@@ -53,12 +53,12 @@ void LexerDestroy(void *lexer) {
 	free(l);
 }
 
-static void LexerRegisterLabel(Lexer *l, Token *t) {
+static void LexerRegisterLabel(Lexer *l, Token *t, void *symTb) {
 #ifdef DBG
 	printf("Registering label: |%s| at addr %d\n",
 			token->st, l->instAddress);
 #endif
-	//TODO
+	SymTbInsert(symTb, t->st, l->instAddress);
 }
 
 /**
@@ -116,7 +116,7 @@ static void LexerGenerateInstruction(Lexer *l, Token *instruction) {
  * Consequently before creating any lexemes this function should check the
  * queue and return those lexemes first.
  */
-int LexerGetLexeme(void *lexer, Lexeme **lexeme) {
+int LexerGetLexeme(void *lexer, Lexeme **lexeme, void *symTb) {
 	Lexer *l = (Lexer*) lexer;
 	Token *tok;
 
@@ -126,7 +126,7 @@ int LexerGetLexeme(void *lexer, Lexeme **lexeme) {
 
 	while (TokenGet(l->tokenizer, &tok) == 0) {
 		if (tok->type == TOKEN_LABEL_DEF) {
-			LexerRegisterLabel(l, tok);
+			LexerRegisterLabel(l, tok, symTb);
 		}
 		else if (tok->type == TOKEN_OPCODE) {
 			LexerGenerateInstruction(l, tok);

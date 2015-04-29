@@ -29,6 +29,6 @@ void LexerDestroy(void *lexer);
  * Consequently before creating any lexemes this function should check the
  * queue and return those lexemes first.
  */
-int LexerGetLexeme(void *lexer, Lexeme **lexeme);
+int LexerGetLexeme(void *lexer, Lexeme **lexeme, void *symTb);
 
 #endif
