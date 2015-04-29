@@ -22,7 +22,6 @@ void CGDestroy(void *codeGenr);
  * and puts the resulting instruction (represented as a 32-bit int)
  * into |machineCode|.  Returns 0 on success, and non-zero on error.
  */
-int CGGenerateInstruction(/**CodeGenerator *cg, */void *symTb,
-	Lexeme *command, int *machineCode);
+int CGGenerateInstruction(void *symTb, Lexeme *command, int *machineCode);
 
 #endif

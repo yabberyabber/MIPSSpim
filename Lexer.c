@@ -17,7 +17,7 @@
 #include "SymbolTable.h"
 #include "Instruction.h"
 
-#define TEXT_START_ADDRESS		0x40000
+#define TEXT_START_ADDRESS		0x0000
 
 /**
  * lQueue is a que of lexemes.  In the event of a pseudo instruction, having
