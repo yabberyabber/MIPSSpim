@@ -15,6 +15,7 @@
 typedef struct Token {
 	int type;
 	char *st;
+	int num;
 } Token;
 
 void *TokenizerInit();

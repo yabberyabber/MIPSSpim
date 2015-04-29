@@ -102,9 +102,9 @@ int getCodes(char* str) {
 }
 
 int IsInstruction(char *str) {
-	return IsRTypeInstruction(str) ||
-		IsITypeInstruction(str) ||
-		IsJTypeInstruction(str) ||
+	return IsRTypeInstruction(str) |
+		IsITypeInstruction(str) |
+		IsJTypeInstruction(str) |
 		IsPTypeInstruction(str);
 }
 

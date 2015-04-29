@@ -39,6 +39,33 @@ void TokenEndln(Token **token) {
 	(*token)->st = NULL;
 }
 
+/**
+ * if the given string |str| can be parsed into
+ * a 10 or 16 bit int, then ret is set to it's value
+ * and 1 is returned.  Otherwise (like if |str| is non-numeric),
+ * 0 is returned and ret is set to 0.
+ */
+static int parseInt(char *str, int *ret) {
+	int result;
+	char *err;
+
+	//try base ten
+	result = strtol(str, &err, 10);
+	if (*err == '\0') {
+		*ret = result;
+		return 1;
+	}
+
+	//try base 16
+	result = strtol(str, &err, 16);
+	if (*err == '\0') {
+		*ret = result;
+		return 1;
+	}
+	*ret = 0;
+	return 0;
+}
+
 void TokenGenerate(char *tokenStr, Token **token) {
 	*token = malloc(sizeof(Token));
 	tokenStr = TrimString(tokenStr);
@@ -65,8 +92,13 @@ void TokenGenerate(char *tokenStr, Token **token) {
 	else {
 		//token is none of the above... default to argument
 		(*token)->type = TOKEN_ARG;
-		(*token)->st = malloc(sizeof(char) * strlen(tokenStr) + 1);
-		strcpy((*token)->st, tokenStr);
+		if (parseInt(tokenStr, &((*token)->num))) {
+			(*token)->st = NULL;
+		}
+		else {
+			(*token)->st = malloc(sizeof(char) * strlen(tokenStr) + 1);
+			strcpy((*token)->st, tokenStr);
+		}
 	}
 }
 

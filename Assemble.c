@@ -22,6 +22,17 @@ typedef struct lexNode {
 	struct lexNode *next;
 } lexNode;
 
+void prettyPrintLexeme(Lexeme *lex) {
+	int i;
+	printf("%d: (%s", lex->address,
+		lex->opcode->st);
+	for (i = 0; i < 4; i++)
+		if (lex->args[i] != NULL)
+			printf(", (|%s| (%d), %d)", lex->args[i]->st, 
+					lex->args[i]->num, lex->args[i]->type);
+	printf(")\n");
+}
+
 lexNode *GenerateLexemeList(void *symTb) {
 	void *lexer;
 	Lexeme *lex;
@@ -31,6 +42,7 @@ lexNode *GenerateLexemeList(void *symTb) {
 	lexer = LexerInit();
 
 	while (LexerGetLexeme(lexer, &lex, symTb) == 0) {
+		prettyPrintLexeme(lex);
 		lexNode *new = malloc(sizeof(lexNode));
 		new->lex = lex;
 		new->next = NULL;
@@ -54,13 +66,17 @@ int *GenerateCodeSegmentArray(lexNode *head, void *symTb) {
 	int status, instr;
 
 	while (head) {
+		prettyPrintLexeme(head->lex);
 		status = CGGenerateInstruction(symTb, head->lex, &instr);
+		printf("yay I generated a code!: %X\n", instr);
 		if (status) {
 			printf("Ran into the following error during code generation: %d\n",
 					status);
 			return NULL;
 		}
 		mem[head->lex->address / 4] = instr;
+
+		head = head->next;
 	}
 	return mem;
 }

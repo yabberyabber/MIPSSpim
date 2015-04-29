@@ -1,3 +1,4 @@
+#include "stdio.h"
 #include "stdlib.h"
 #include "string.h"
 
@@ -18,17 +19,34 @@ int getReg(char *str){
 	return -1;
 }
 
+/**
+ * Takes a token (argument), the address of it's instruction, and the symbol 
+ * table.  If the token is a label, it resolves the label (using the symbol
+ * table and the address) and returns the offset.  Otherwise, the token should
+ * represent a number so it returns that.
+ */
+static int resolveImmediate(Token *tok, int instrAddr, void *symTb) {
+	int symbolAddr;
+
+	if (tok->st == NULL)
+		return tok->num;
+
+	SymTbLookup(symTb, tok->st, &symbolAddr);
+	return symbolAddr - instrAddr;
+}
+
 int CGGenerateInstruction(void *symTb, Lexeme *command, int *machineCode){
-	int val;
  	char *str = command->opcode->st;
  	int func = IsInstruction(str);
+
  	*machineCode = getCodes(str);
  	switch(func){
  		case R_INSTR:
  			if(!strcmp(str, "sll") || !strcmp(str, "srl") || !strcmp(str, "sra")){
  				*machineCode |= getReg(command->args[0]->st) << 10; // rd
  				*machineCode |= getReg(command->args[1]->st) << 15; // rt
- 				*machineCode |= atoi(command->args[2]->st) << 5; // shamt
+ 				*machineCode |= resolveImmediate(command->args[2], command->address,
+						symTb) << 5; // shamt
  			}
  			else if(!strcmp(str, "jr")){
  				*machineCode |= getReg(command->args[0]->st) << 20; // rs
@@ -40,18 +58,21 @@ int CGGenerateInstruction(void *symTb, Lexeme *command, int *machineCode){
  			}
  			break;
  		case I_INSTR:
- 			*machineCode |= getReg(command->args[0]->st) << 15; // rt
- 			*machineCode |= getReg(command->args[1]->st) << 20; // rs
- 			if(!strcmp(str, "beq") || !strcmp(str, "bne")){
- 				SymTbLookup(symTb, command->args[2]->st, &val);
- 				*machineCode |= (val - command->address) & 0x0000FFFF; // branch address
- 			}
- 			else
- 				*machineCode |= atoi(command->args[2]->st) & 0x0000FFFF; // imm
+			if (!strcmp(str, "lui")) {
+				*machineCode |= getReg(command->args[0]->st) << 15; // rt
+				*machineCode |= resolveImmediate(command->args[1], command->address,
+						symTb) & 0x0000FFFF;
+			}
+			else {
+				*machineCode |= getReg(command->args[0]->st) << 15; // rt
+				*machineCode |= getReg(command->args[1]->st) << 20; // rs
+				*machineCode |= resolveImmediate(command->args[2], command->address,
+						symTb) & 0x0000FFFF;
+			}
  			break;
  		case J_INSTR:
- 			SymTbLookup(symTb, command->args[0]->st, &val);
- 			*machineCode |= val & 0x07FFFFFF; // j address
+			*machineCode |= resolveImmediate(command->args[0], command->address,
+					symTb) & 0x07FFFFFF;
  			break;
  		case P_INSTR:
  			break;

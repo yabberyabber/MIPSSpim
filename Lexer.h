@@ -13,7 +13,6 @@
 
 typedef struct Lexeme {
 	int address;
-	int type;
 	Token *opcode;
 	Token *args[5];
 } Lexeme;
