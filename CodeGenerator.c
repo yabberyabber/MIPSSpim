@@ -43,29 +43,29 @@ int CGGenerateInstruction(void *symTb, Lexeme *command, int *machineCode){
  	switch(func){
  		case R_INSTR:
  			if(!strcmp(str, "sll") || !strcmp(str, "srl") || !strcmp(str, "sra")){
- 				*machineCode |= getReg(command->args[0]->st) << 10; // rd
- 				*machineCode |= getReg(command->args[1]->st) << 15; // rt
+ 				*machineCode |= getReg(command->args[0]->st) << 11; // rd
+ 				*machineCode |= getReg(command->args[1]->st) << 16; // rt
  				*machineCode |= resolveImmediate(command->args[2], command->address,
-						symTb) << 5; // shamt
+						symTb) << 6; // shamt
  			}
  			else if(!strcmp(str, "jr")){
- 				*machineCode |= getReg(command->args[0]->st) << 20; // rs
+ 				*machineCode |= getReg(command->args[0]->st) << 21; // rs
  			}
  			else{
- 				*machineCode |= getReg(command->args[0]->st) << 10; // rd
- 				*machineCode |= getReg(command->args[1]->st) << 20; // rs
- 				*machineCode |= getReg(command->args[2]->st) << 15; // rt
+ 				*machineCode |= getReg(command->args[0]->st) << 11; // rd
+ 				*machineCode |= getReg(command->args[1]->st) << 21; // rs
+ 				*machineCode |= getReg(command->args[2]->st) << 16; // rt
  			}
  			break;
  		case I_INSTR:
 			if (!strcmp(str, "lui")) {
-				*machineCode |= getReg(command->args[0]->st) << 15; // rt
+				*machineCode |= getReg(command->args[0]->st) << 16; // rt
 				*machineCode |= resolveImmediate(command->args[1], command->address,
 						symTb) & 0x0000FFFF;
 			}
 			else {
-				*machineCode |= getReg(command->args[0]->st) << 15; // rt
-				*machineCode |= getReg(command->args[1]->st) << 20; // rs
+				*machineCode |= getReg(command->args[0]->st) << 16; // rt
+				*machineCode |= getReg(command->args[1]->st) << 21; // rs
 				*machineCode |= resolveImmediate(command->args[2], command->address,
 						symTb) & 0x0000FFFF;
 			}

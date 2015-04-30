@@ -92,7 +92,7 @@ int getCodes(char* str) {
 	else { return -1; }
 
 
-	ret = ret << 27;
+	ret = ret << 26;
 	ret = ret | func;
 	return ret;
 }

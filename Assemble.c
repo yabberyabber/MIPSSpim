@@ -68,7 +68,7 @@ int *GenerateCodeSegmentArray(lexNode *head, void *symTb) {
 	while (head) {
 		prettyPrintLexeme(head->lex);
 		status = CGGenerateInstruction(symTb, head->lex, &instr);
-		printf("yay I generated a code!: %X\n", instr);
+		printf("yay I generated a code!: 0x%08X\n", instr);
 		if (status) {
 			printf("Ran into the following error during code generation: %d\n",
 					status);
