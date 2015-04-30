@@ -72,7 +72,7 @@ int CGGenerateInstruction(void *symTb, Lexeme *command, int *machineCode){
  			break;
  		case J_INSTR:
 			*machineCode |= resolveImmediate(command->args[0], command->address,
-					symTb) & 0x07FFFFFF;
+					symTb) & 0x03FFFFFF;
  			break;
  		case P_INSTR:
  			break;
