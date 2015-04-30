@@ -11,6 +11,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "Lexer.h"
 #include "Tokenizer.h"
@@ -31,6 +32,7 @@ typedef struct Lexer {
 	Lexeme *lQueue[3];
 	void *tokenizer;
 	int instAddress;
+	int endReached;
 } Lexer;
 
 void *LexerInit() {
@@ -43,6 +45,8 @@ void *LexerInit() {
 	l->tokenizer = TokenizerInit();
 
 	l->instAddress = TEXT_START_ADDRESS;
+
+	l->endReached = 0;
 
 	return l;
 }
@@ -112,9 +116,15 @@ static void LexerGenerateInstruction(Lexer *l, Token *instruction) {
  * encountered, we throw away the rest of the line and hope it wasn't
  * important...
  */
-static void LexerProcessDirective(Lexer *l, Token *tok) {
+static int LexerProcessDirective(Lexer *l, Token *tok) {
+	if (strcmp(tok->st, ".end") == 0) {
+		l->endReached = 1;
+		return 1;
+	}
+
 	while (tok->type != TOKEN_ENDL)
 		TokenGet(l->tokenizer, &tok);
+	return 0;
 }
 
 
@@ -149,11 +159,12 @@ int LexerGetLexeme(void *lexer, Lexeme **lexeme, void *symTb) {
 			return -1;
 		}
 		else if (tok->type == TOKEN_DIRECTIVE) {
-			LexerProcessDirective(l, tok);
+			if (LexerProcessDirective(l, tok))
+				break;
 		}
 	}
 
-	if (status == -1)
+	if (status == -1 || l->endReached == 1)
 		return -1;
 
 	return 0;
