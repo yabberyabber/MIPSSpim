@@ -84,10 +84,7 @@ int getCodes(char* str) {
                 }
         }
 	else if(IsPTypeInstruction(str)) {
-                for(i = 0; i < NUM_P_INSTR; i++) {
-                        if (strcmp(P_INSTRUCTIONS[i], str) == 0)
-                                ret = P_OPCODES[i];
-                }
+                func = *P_OPCODES;
         }
 	else { return -1; }
 
