@@ -32,7 +32,7 @@ static int resolveImmediate(Token *tok, int instrAddr, void *symTb) {
 		return tok->num;
 
 	SymTbLookup(symTb, tok->st, &symbolAddr);
-	return symbolAddr - instrAddr;
+	return (symbolAddr - instrAddr) >> 2;
 }
 
 int CGGenerateInstruction(void *symTb, Lexeme *command, int *machineCode){
@@ -71,8 +71,8 @@ int CGGenerateInstruction(void *symTb, Lexeme *command, int *machineCode){
 			}
  			break;
  		case J_INSTR:
-			*machineCode |= resolveImmediate(command->args[0], command->address,
-					symTb) & 0x03FFFFFF;
+			*machineCode |= (resolveImmediate(command->args[0], command->address,
+					symTb) + (command->address >> 2)) & 0x03FFFFFF;
  			break;
  		case P_INSTR:
  			break;
