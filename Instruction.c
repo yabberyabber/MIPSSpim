@@ -16,7 +16,7 @@
 
 const char *R_INSTRUCTIONS[] = {"and", "or", "add", "addu", "sll", "srl", "sra", "sub", "sltu", "jr"};
 const int R_OPCODES[] = {0,0,0,0,0,0,0,0,0,0};
-const int R_FUNC_CODES[] = {0x24,0x25,0x20,0x21,0x00,0x02,0x03,0x22,0x2B,0,0,0,0,0x08};
+const int R_FUNC_CODES[] = {0x24,0x25,0x20,0x21,0x00,0x02,0x03,0x22,0x2B,0x08};
 const char *I_INSTRUCTIONS[] = {"addi", "addiu", "sltiu", "beq", "bne", "lw", "sw", "ori", "lui"};
 const int I_OPCODES[] = {0x08,0x09,0x0B,4,5,0x23,0x2B, 0X0D, 0x0F};
 const char *J_INSTRUCTIONS[] = {"j", "jal"};
