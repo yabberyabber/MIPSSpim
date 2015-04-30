@@ -9,10 +9,6 @@
 #define NUM_I_INSTR		9
 #define NUM_J_INSTR		2
 #define NUM_P_INSTR		1
-#define R_INSTR 		1
-#define I_INSTR 		2
-#define J_INSTR 		3
-#define P_INSTR 		4
 
 const char *R_INSTRUCTIONS[] = {"and", "or", "add", "addu", "sll", "srl", "sra", "sub", "sltu", "jr"};
 const int R_OPCODES[] = {0,0,0,0,0,0,0,0,0,0};
@@ -22,7 +18,7 @@ const int I_OPCODES[] = {0x08,0x09,0x0B,4,5,0x23,0x2B, 0X0D, 0x0F};
 const char *J_INSTRUCTIONS[] = {"j", "jal"};
 const int J_OPCODES[] = {0x02,0x03};
 const char *P_INSTRUCTIONS[] = {"syscall"};
-const int P_OPCODES[] = {0};
+const int P_OPCODES[] = {0xC};
 
 int IsRTypeInstruction(char *str) {
 	int i;
